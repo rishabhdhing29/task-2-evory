@@ -1,0 +1,41 @@
+clusters:
+    - name: service1
+      connect_timeout: 0.25s
+      type: strict_dns
+      lb_policy: round_robin
+      http2_protocol_options: {}
+      load_assignment:
+        cluster_name: service1
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: service1
+                      port_value: 8000
+    - name: service2
+      connect_timeout: 0.25s
+      type: strict_dns
+      lb_policy: round_robin
+      http2_protocol_options: {}
+      load_assignment:
+        cluster_name: service2
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: service2
+                      port_value: 8000
+
+Similarly, setting up two clusters here is pretty nondescript and easy to do. Why two clusters? Because it’s routing traffic to two different sets of endpoints! The services are named. They have a connection timeout of 0.25s and a round-robin load balancing policy. In a production environment, round-robin might not be the best choice, but for the sake of a demo explanation, it works. For more information on what type of timeouts can be configured in Envoy, take a look at the Envoy docs.
+
+What’s particularly interesting to note is the use of HTTP/2, which in comparison to its predecessor changes how the data is formatted and transported to reduce latency. If you’d like to know more about HTTP/2, then I’d recommend reading this introductory piece from Google on Web Fundamentals.
+
+Admin  
+admin:
+  access_log_path: "/dev/null"
+  address:
+    socket_address:
+      address: 0.0.0.0
+      port_value: 8001
